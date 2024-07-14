@@ -1,5 +1,6 @@
 import React from "react";
-import HeaderIcon from "./header-icon";
+import HeaderLogo from "./header-logo";
+import Navigation from "./navigation";
 
 export default function Header() {
   return (
@@ -7,7 +8,8 @@ export default function Header() {
       <div className="max-w-screen-2xl mx-auto">
         <div className="w-full flex justify-between items-center mb-14">
           <div className="flex items-center lg:gap-x-16">
-            <HeaderIcon />
+            <HeaderLogo />
+            <Navigation />
           </div>
         </div>
       </div>
