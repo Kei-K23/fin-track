@@ -1,5 +1,10 @@
+import { UserButton } from "@clerk/nextjs";
 import React from "react";
 
 export default function Page() {
-  return <div>This is protected</div>;
+  return (
+    <div>
+      <UserButton />
+    </div>
+  );
 }
