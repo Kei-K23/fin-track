@@ -2,6 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import NavigationItem from "./navigation-item";
+import { useMedia } from "react-use";
+import ResponsiveNavigation from "./responsive-navigation";
 
 const ROUTES = [
   {
@@ -28,6 +30,14 @@ const ROUTES = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  // Mobile view
+  const isMobile = useMedia("(max-width: 1024px)", false);
+
+  // Responsive navigation for mobile views
+  if (isMobile) {
+    return <ResponsiveNavigation routes={ROUTES} />;
+  }
+
   return (
     <nav className="hidden lg:flex gap-x-2 overflow-x-hidden">
       {ROUTES.map(({ href, label }) => (
