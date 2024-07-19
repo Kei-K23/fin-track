@@ -12,6 +12,7 @@ import { z } from "zod";
 import { useCreateAccount } from "../api/use-create-account";
 import { useOpenAccount } from "../hook/use-open-account";
 import { useGetAccount } from "../api/use-get-account";
+import { Loader2 } from "lucide-react";
 
 const formSchema = insertAccountSchema.pick({
   name: true,
@@ -32,21 +33,37 @@ export default function EditAccountSheet() {
     });
   };
 
+  const isDisabled = getAccount.isLoading;
+
+  const defaultValue = getAccount.data
+    ? {
+        name: getAccount.data.name,
+      }
+    : {
+        name: "",
+      };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Create Account</SheetTitle>
+          <SheetTitle>Edit Account</SheetTitle>
           <SheetDescription>
-            Create a new account to track your finance transactions.
+            Edit or delete an existing account
           </SheetDescription>
         </SheetHeader>
-        <AccountCreateForm
-          id={getAccount.data?.id}
-          onSubmit={onSubmit}
-          defaultValue={{ name: "" }}
-          disabled={mutation.isPending}
-        />
+        {isDisabled ? (
+          <div className="absolute inset-0 flex justify-center items-center">
+            <Loader2 className="size-4 text-muted-foreground animate-spin" />
+          </div>
+        ) : (
+          <AccountCreateForm
+            id={getAccount.data?.id}
+            onSubmit={onSubmit}
+            defaultValue={defaultValue}
+            disabled={isDisabled}
+          />
+        )}
       </SheetContent>
     </Sheet>
   );

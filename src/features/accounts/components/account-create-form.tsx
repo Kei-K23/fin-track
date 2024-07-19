@@ -73,7 +73,7 @@ export default function AccountCreateForm({
           <Button disabled={disabled} type="submit" className="w-full">
             {id ? "Save changes" : "Create account"}
           </Button>
-          {!id && (
+          {!!id && (
             <Button
               disabled={disabled}
               type="button"
