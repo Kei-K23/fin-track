@@ -9,10 +9,10 @@ import React from "react";
 import AccountCreateForm from "./account-create-form";
 import { insertAccountSchema } from "@/db/schema";
 import { z } from "zod";
-import { useCreateAccount } from "../api/use-create-account";
 import { useOpenAccount } from "../hook/use-open-account";
 import { useGetAccount } from "../api/use-get-account";
 import { Loader2 } from "lucide-react";
+import { useEditAccount } from "../api/use-edit-account";
 
 const formSchema = insertAccountSchema.pick({
   name: true,
@@ -22,7 +22,7 @@ type FormValues = z.input<typeof formSchema>;
 
 export default function EditAccountSheet() {
   const { isOpen, onClose, id } = useOpenAccount();
-  const mutation = useCreateAccount();
+  const mutation = useEditAccount(id);
   const getAccount = useGetAccount(id);
 
   const onSubmit = (values: FormValues) => {

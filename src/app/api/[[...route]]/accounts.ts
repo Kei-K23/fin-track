@@ -153,6 +153,50 @@ const app = new Hono()
 
             return c.json({ data });
         })
+    .delete("/:id", clerkMiddleware(), zValidator("param", z.object({
+        id: z.string()
+    })), async (c) => {
+        const auth = getAuth(c);
+        const { id } = c.req.param();
+
+        if (!id) {
+            return c.json({
+                error: "Missing id parameter"
+            }, 400);
+        }
+        // If user is not authenticated
+        if (!auth?.userId) {
+            return c.json({
+                error: "Unauthorize user"
+            }, 401);
+        }
+
+        const [existingAccount] = await db.select({
+            id: accounts.id,
+            name: accounts.name
+        }).from(accounts)
+            .where(
+                and(
+                    eq(accounts.id, id),
+                    eq(accounts.userId, auth.userId),
+                )
+            );
+
+        if (!existingAccount) {
+            return c.json({
+                error: "Account not found to delete"
+            }, 404);
+        }
+
+        const [data] = await db.delete(accounts).where(
+            and(
+                eq(accounts.id, id),
+                eq(accounts.userId, auth.userId),
+            )
+        ).returning()
+
+        return c.json({ data });
+    })
     ;
 
 export default app;
