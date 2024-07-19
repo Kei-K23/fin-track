@@ -47,7 +47,7 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [ConfirmDialog, confirm] = useConfirm({
     title: "Are you sure you want to delete",
-    message: "This will permanently delete the all selected accounts",
+    message: "This will permanently delete the all selected data",
   });
 
   const table = useReactTable({
@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+        {table?.getFilteredSelectedRowModel().rows.length > 0 && (
           <Button
             disabled={disabled}
             size={"sm"}
