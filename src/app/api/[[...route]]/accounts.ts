@@ -29,6 +29,12 @@ const app = new Hono()
     })), async (c) => {
         const auth = getAuth(c);
         const { id } = c.req.param();
+
+        if (!id) {
+            return c.json({
+                error: "Missing id parameter"
+            }, 400);
+        }
         // If user is not authenticated
         if (!auth?.userId) {
             return c.json({
