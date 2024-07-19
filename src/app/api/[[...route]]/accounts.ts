@@ -104,6 +104,55 @@ const app = new Hono()
 
         return c.json({ data });
     })
+    .patch("/:id", clerkMiddleware(), zValidator("param", z.object({
+        id: z.string()
+    })),
+        zValidator("json", insertAccountSchema.pick({
+            name: true
+        }))
+        , async (c) => {
+            const auth = getAuth(c);
+            const { id } = c.req.param();
+            const { name } = c.req.valid("json");
+
+            if (!id) {
+                return c.json({
+                    error: "Missing id parameter"
+                }, 400);
+            }
+            // If user is not authenticated
+            if (!auth?.userId) {
+                return c.json({
+                    error: "Unauthorize user"
+                }, 401);
+            }
+
+            const [existingAccount] = await db.select({
+                id: accounts.id,
+                name: accounts.name
+            }).from(accounts)
+                .where(
+                    and(
+                        eq(accounts.id, id),
+                        eq(accounts.userId, auth.userId),
+                    )
+                );
+
+            if (!existingAccount) {
+                return c.json({
+                    error: "Account not found to update"
+                }, 404);
+            }
+
+            const [data] = await db.update(accounts).set({
+                name
+            }).where(and(
+                eq(accounts.userId, auth.userId),
+                eq(accounts.id, id)
+            )).returning();
+
+            return c.json({ data });
+        })
     ;
 
 export default app;
