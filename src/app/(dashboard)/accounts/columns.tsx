@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { InferResponseType } from "hono";
 import { client } from "@/lib/hono";
+import Actions from "./actions";
 
 export type ResponseType = InferResponseType<
   typeof client.api.accounts.$get,
@@ -48,5 +49,9 @@ export const columns: ColumnDef<ResponseType>[] = [
         </Button>
       );
     },
+  },
+  {
+    id: "select",
+    cell: ({ row }) => <Actions id={row.original.id} />,
   },
 ];
