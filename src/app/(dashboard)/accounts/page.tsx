@@ -9,11 +9,11 @@ import { columns } from "./columns";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNewAccount } from "@/features/accounts/hook/use-new-account";
-import { useDeleteAccount } from "@/features/accounts/api/use-delete-account";
+import { useDeleteAccounts } from "@/features/accounts/api/use-delete-accounts";
 
 export default function AccountPage() {
   const accountQuery = useGetAccounts();
-  const deleteAccount = useDeleteAccount();
+  const deleteAccount = useDeleteAccounts();
   const { onOpen } = useNewAccount();
 
   let isDisabled = accountQuery.isLoading || deleteAccount.isPending;

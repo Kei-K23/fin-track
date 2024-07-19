@@ -10,7 +10,7 @@ export const useGetAccount = (id?: string) => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to fetch accounts");
+                throw new Error("Failed to fetch account");
             }
 
             const { data } = await response.json();
