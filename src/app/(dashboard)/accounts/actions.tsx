@@ -2,12 +2,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDeleteAccount } from "@/features/accounts/api/use-delete-account";
 import { useOpenAccount } from "@/features/accounts/hook/use-open-account";
+import useConfirm from "@/hooks/use-confirm";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 
 type ActionsProps = {
@@ -16,8 +15,13 @@ type ActionsProps = {
 export default function Actions({ id }: ActionsProps) {
   const { onOpen } = useOpenAccount();
   const deleteAccount = useDeleteAccount(id);
+  const [ConfirmDialog, confirm] = useConfirm({
+    title: "Delete account",
+    message: "Are you sure you want to delete this account?",
+  });
   return (
     <>
+      <ConfirmDialog />
       <DropdownMenu>
         <DropdownMenuTrigger>
           <MoreHorizontal className="size-4" />
@@ -31,7 +35,12 @@ export default function Actions({ id }: ActionsProps) {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={() => deleteAccount.mutate({ id })}
+            onClick={async () => {
+              const isOk = await confirm();
+              if (isOk) {
+                deleteAccount.mutate({ id });
+              }
+            }}
           >
             <Trash className="size-4 mr-2" /> Delete
           </DropdownMenuItem>
