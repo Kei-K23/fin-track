@@ -35,9 +35,7 @@ export default function NewCategorySheet() {
       <SheetContent>
         <SheetHeader>
           <SheetTitle>Create Category</SheetTitle>
-          <SheetDescription>
-            Create a new category to track your finance transactions.
-          </SheetDescription>
+          <SheetDescription>Create a new category</SheetDescription>
         </SheetHeader>
         <CategoryCreateForm
           onSubmit={onSubmit}

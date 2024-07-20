@@ -13,12 +13,17 @@ import { Input } from "@/components/ui/input";
 import { Trash } from "lucide-react";
 
 const formSchema = z.object({
-  name: z.string().min(2).max(50),
+  date: z.coerce.date(),
+  accountId: z.string(),
+  categoryId: z.string().nullable().optional(),
+  payee: z.string(),
+  amount: z.string(),
+  notes: z.string().nullable().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-type AccountCreateFormProps = {
+type TransactionCreateFormProps = {
   id?: string;
   defaultValue?: FormValues;
   onSubmit?: (form: FormValues) => void;
@@ -26,13 +31,13 @@ type AccountCreateFormProps = {
   disabled?: boolean;
 };
 
-export default function AccountCreateForm({
+export default function TransactionCreateForm({
   id,
   defaultValue,
   onSubmit,
   onDelete,
   disabled,
-}: AccountCreateFormProps) {
+}: TransactionCreateFormProps) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
