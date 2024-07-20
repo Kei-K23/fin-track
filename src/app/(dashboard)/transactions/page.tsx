@@ -6,18 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus } from "lucide-react";
 import React from "react";
 import { columns } from "./columns";
-import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDeleteAccounts } from "@/features/accounts/api/use-delete-accounts";
 import { useNewTransaction } from "@/features/transactions/hook/use-new-account";
+import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
+import { useDeleteTransaction } from "@/features/transactions/api/use-delete-transaction";
 
 export default function TransactionPage() {
-  const accountQuery = useGetAccounts();
-  const deleteAccount = useDeleteAccounts();
+  const transactionsQuery = useGetTransactions();
+  const deleteTransaction = useDeleteTransaction();
   const { onOpen } = useNewTransaction();
-  const data = accountQuery.data || [];
+  const data = transactionsQuery.data || [];
 
-  let isDisabled = accountQuery.isLoading || deleteAccount.isPending;
+  let isDisabled = transactionsQuery.isLoading || deleteTransaction.isPending;
 
   if (isDisabled) {
     return (
