@@ -66,7 +66,7 @@ export default function NewTransactionSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent>
+      <SheetContent className="h-full">
         <SheetHeader>
           <SheetTitle>Create Transaction</SheetTitle>
           <SheetDescription>Create a new transaction</SheetDescription>

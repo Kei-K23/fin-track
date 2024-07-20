@@ -10,11 +10,11 @@ import AccountCreateForm from "./transaction-create-form";
 import { insertAccountSchema } from "@/db/schema";
 import { z } from "zod";
 import { useOpenAccount } from "../hook/use-open-account";
-import { useGetAccount } from "../api/use-get-account";
 import { Loader2 } from "lucide-react";
-import { useEditAccount } from "../api/use-edit-account";
-import { useDeleteAccount } from "../api/use-delete-account";
 import useConfirm from "@/hooks/use-confirm";
+import { useEditTransaction } from "../api/use-edit-transaction";
+import { useGetAccount } from "@/features/accounts/api/use-get-account";
+import { useDeleteAccount } from "@/features/accounts/api/use-delete-account";
 
 const formSchema = insertAccountSchema.pick({
   name: true,
@@ -24,7 +24,7 @@ type FormValues = z.input<typeof formSchema>;
 
 export default function EditAccountSheet() {
   const { isOpen, onClose, id } = useOpenAccount();
-  const mutation = useEditAccount(id);
+  const mutation = useEditTransaction(id);
   const getAccount = useGetAccount(id);
   const deleteAccount = useDeleteAccount(id);
   const [ConfirmDialog, confirm] = useConfirm({

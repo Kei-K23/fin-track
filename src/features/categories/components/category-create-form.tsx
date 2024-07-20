@@ -51,7 +51,7 @@ export default function CategoryCreateForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-8 pt-4"
+        className="space-y-4 pt-4"
       >
         <FormField
           control={form.control}
