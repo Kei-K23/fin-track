@@ -9,8 +9,9 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Trash } from "lucide-react";
+import { insertTransactionSchema } from "@/db/schema";
+import Select from "@/components/select";
 
 const formSchema = z.object({
   date: z.coerce.date(),
@@ -21,14 +22,23 @@ const formSchema = z.object({
   notes: z.string().nullable().optional(),
 });
 
+const apiSchema = insertTransactionSchema.omit({
+  id: true,
+});
+
 type FormValues = z.infer<typeof formSchema>;
+type ApiFormValues = z.infer<typeof apiSchema>;
 
 type TransactionCreateFormProps = {
   id?: string;
   defaultValue?: FormValues;
-  onSubmit?: (form: FormValues) => void;
+  onSubmit?: (values: ApiFormValues) => void;
   onDelete?: () => void;
   disabled?: boolean;
+  categoryOptions: { label: string; value: string }[];
+  accountOptions: { label: string; value: string }[];
+  onCreateCategory: (name: string) => void;
+  onCreateAccount: (name: string) => void;
 };
 
 export default function TransactionCreateForm({
@@ -37,6 +47,10 @@ export default function TransactionCreateForm({
   onSubmit,
   onDelete,
   disabled,
+  accountOptions,
+  categoryOptions,
+  onCreateAccount,
+  onCreateCategory,
 }: TransactionCreateFormProps) {
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +59,7 @@ export default function TransactionCreateForm({
   });
 
   const handleSubmit = (values: FormValues) => {
-    onSubmit?.(values);
+    console.log(values);
   };
 
   const handleDelete = () => {
@@ -60,15 +74,37 @@ export default function TransactionCreateForm({
       >
         <FormField
           control={form.control}
-          name="name"
+          name="accountId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Account</FormLabel>
               <FormControl>
-                <Input
+                <Select
+                  placeholder="Select an account"
+                  options={accountOptions}
+                  onCreate={onCreateAccount}
+                  value={field.value}
+                  onChange={field.onChange}
                   disabled={disabled}
-                  placeholder="e.g Cash, Bank, Credit Card"
-                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Select
+                  placeholder="Select a category"
+                  options={categoryOptions}
+                  onCreate={onCreateCategory}
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={disabled}
                 />
               </FormControl>
             </FormItem>
@@ -76,7 +112,7 @@ export default function TransactionCreateForm({
         />
         <div className="flex flex-col sm:flex-row  gap-4">
           <Button disabled={disabled} type="submit" className="w-full">
-            {id ? "Save changes" : "Create account"}
+            {id ? "Save changes" : "Create transaction"}
           </Button>
           {!!id && (
             <Button
@@ -87,7 +123,7 @@ export default function TransactionCreateForm({
               onClick={handleDelete}
             >
               <Trash className="size-4 mr-2" />
-              <span>Delete account</span>
+              <span>Delete transaction</span>
             </Button>
           )}
         </div>

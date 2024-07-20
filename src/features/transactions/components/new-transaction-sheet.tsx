@@ -15,7 +15,7 @@ import { useCreateCategory } from "@/features/categories/api/use-create-category
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useCreateAccount } from "@/features/accounts/api/use-create-account";
 import { Loader2 } from "lucide-react";
-import TransactionCreateForm from "./account-create-form";
+import TransactionCreateForm from "./transaction-create-form";
 
 const formSchema = insertTransactionSchema.omit({
   id: true,
