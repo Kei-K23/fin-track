@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { accounts, categories, insertAccountSchema, insertTransactionSchema, transactions } from "@/db/schema";
+import { accounts, categories, insertTransactionSchema, transactions } from "@/db/schema";
 import { Hono } from "hono";
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth"
 import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
@@ -7,6 +7,7 @@ import { zValidator } from "@hono/zod-validator"
 import { createId } from "@paralleldrive/cuid2"
 import { z } from "zod";
 import { parse, subDays } from "date-fns"
+import { convertAmountFromMiliUnits } from "@/lib/utils";
 
 const app = new Hono()
     .get("/", clerkMiddleware(), zValidator("query", z.object({
@@ -53,7 +54,12 @@ const app = new Hono()
             )
             .orderBy(desc(transactions.date));
 
-        return c.json({ data: data });
+        return c.json({
+            data: data.map(d => ({
+                ...d,
+                amount: convertAmountFromMiliUnits(d.amount)
+            }))
+        });
     })
     .get("/:id", clerkMiddleware(), zValidator("param", z.object({
         id: z.string()
@@ -77,8 +83,6 @@ const app = new Hono()
             id: transactions.id,
             categoryId: transactions.categoryId,
             accountId: transactions.accountId,
-            category: categories.name,
-            account: accounts.name,
             payee: transactions.payee,
             amount: transactions.amount,
             notes: transactions.notes,
@@ -98,7 +102,12 @@ const app = new Hono()
             }, 404);
         }
 
-        return c.json({ data });
+        return c.json({
+            data: {
+                ...data,
+                amount: convertAmountFromMiliUnits(data.amount)
+            }
+        });
     })
     .post("/", clerkMiddleware(), zValidator("json", insertTransactionSchema.omit({
         id: true
@@ -166,7 +175,7 @@ const app = new Hono()
         const data = await db.with(transactionsToDelete)
             .delete(transactions)
             .where(and(
-                inArray(transactions.id, sql`SELECT id from ${transactionsToDelete}`),
+                inArray(transactions.id, sql`(select id from ${transactionsToDelete})`),
             ))
             .returning({
                 id: transactions.id
@@ -208,10 +217,9 @@ const app = new Hono()
                     )
             );
 
-            const [data] = await db.with(transactionToUpdate).update(transactions).set(values).where(and(
-                eq(accounts.userId, auth.userId),
-                eq(transactions.id, id)
-            )).returning();
+            const [data] = await db.with(transactionToUpdate).update(transactions).set(values).where(
+                inArray(transactions.id, sql`(select id from ${transactionToUpdate})`)
+            ).returning();
 
             if (!data) {
                 return c.json({
@@ -239,7 +247,6 @@ const app = new Hono()
             }, 401);
         }
 
-
         const transactionToDelete = db.$with("transaction_to_delete").as(
             db.select({ id: transactions.id }).from(transactions)
                 .innerJoin(accounts, eq(transactions.accountId, accounts.id))
@@ -251,12 +258,8 @@ const app = new Hono()
                 )
         );
 
-
-        const [data] = await db.with(transactionToDelete).delete(accounts).where(
-            and(
-                eq(accounts.id, id),
-                eq(accounts.userId, auth.userId),
-            )
+        const [data] = await db.with(transactionToDelete).delete(transactions).where(
+            inArray(transactions.id, sql`(select id from ${transactionToDelete})`)
         ).returning();
 
         if (!data) {

@@ -7,18 +7,17 @@ import { Loader2, Plus } from "lucide-react";
 import React from "react";
 import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDeleteAccounts } from "@/features/accounts/api/use-delete-accounts";
-import { useNewTransaction } from "@/features/transactions/hook/use-new-account";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
-import { useDeleteTransaction } from "@/features/transactions/api/use-delete-transaction";
+import { useDeleteTransactions } from "@/features/transactions/api/use-delete-transactions";
+import { useNewTransaction } from "@/features/transactions/hook/use-new-transaction";
 
 export default function TransactionPage() {
   const transactionsQuery = useGetTransactions();
-  const deleteTransaction = useDeleteTransaction();
+  const deleteTransactions = useDeleteTransactions();
   const { onOpen } = useNewTransaction();
   const data = transactionsQuery.data || [];
 
-  let isDisabled = transactionsQuery.isLoading || deleteTransaction.isPending;
+  let isDisabled = transactionsQuery.isLoading || deleteTransactions.isPending;
 
   if (isDisabled) {
     return (
@@ -50,13 +49,13 @@ export default function TransactionPage() {
           </CardHeader>
           <CardContent>
             <DataTable
-              filerKey="name"
+              filerKey="payee"
               columns={columns}
               data={data}
               disabled={isDisabled}
               onDelete={async (rows) => {
                 const ids = rows.map((row) => row.original.id);
-                deleteAccount.mutate({ ids });
+                deleteTransactions.mutate({ ids });
               }}
             />
           </CardContent>

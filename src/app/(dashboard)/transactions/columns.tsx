@@ -73,8 +73,28 @@ export const columns: ColumnDef<ResponseType>[] = [
       );
     },
     cell: ({ row }) => {
-      const { category, categoryId } = row.original;
-      return <CategoryColumn category={category} categoryId={categoryId} />;
+      const { category, categoryId, id } = row.original;
+      return (
+        <CategoryColumn id={id} category={category} categoryId={categoryId} />
+      );
+    },
+  },
+  {
+    accessorKey: "payee",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Payee
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const { payee } = row.original;
+      return <span>{payee}</span>;
     },
   },
   {
@@ -115,7 +135,7 @@ export const columns: ColumnDef<ResponseType>[] = [
           variant={amount < 0 ? "destructive" : "primary"}
           className="text-xs font-medium px-3.5 py-2.5"
         >
-          {formatCurrency(convertAmountFromMiliUnits(amount))}
+          {formatCurrency(amount)}
         </Badge>
       );
     },

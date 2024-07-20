@@ -8,7 +8,7 @@ import {
 import React from "react";
 import { insertTransactionSchema } from "@/db/schema";
 import { z } from "zod";
-import { useNewTransaction } from "../hook/use-new-account";
+import { useNewTransaction } from "../hook/use-new-transaction";
 import { useCreateTransaction } from "../api/use-create-transaction";
 import { useGetCategories } from "@/features/categories/api/use-get-categories";
 import { useCreateCategory } from "@/features/categories/api/use-create-category";
@@ -29,6 +29,7 @@ export default function NewTransactionSheet() {
 
   const categoryQuery = useGetCategories();
   const categoryMutation = useCreateCategory();
+
   const onCreateCategory = (name: string) =>
     categoryMutation.mutate({
       name,
