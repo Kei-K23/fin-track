@@ -6,7 +6,8 @@ import categories from "./categories"
 const app = new Hono().basePath('/api');
 
 const routes = app.route("/accounts", accounts)
-    .route("/categories", categories);
+    .route("/categories", categories)
+    .route("/transactions", categories);
 
 
 export const GET = handle(app);
