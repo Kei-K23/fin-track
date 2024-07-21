@@ -115,7 +115,6 @@ export default function EditTransactionSheet() {
         notes: "",
         payee: "",
       };
-  console.log(defaultValue);
 
   return (
     <>
