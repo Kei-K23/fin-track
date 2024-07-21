@@ -5,7 +5,9 @@ import {
   CartesianGrid,
   XAxis,
   Area,
+  Tooltip,
 } from "recharts";
+import CustomChartTooltip from "./custom-chart-tooltip";
 
 type AreaVariantProps = {
   data: {
@@ -30,6 +32,7 @@ export default function AreaVariant({ data }: AreaVariantProps) {
             <stop offset={"98%"} stopColor="#f43f5e" stopOpacity={0} />
           </linearGradient>
         </defs>
+        <Tooltip content={<CustomChartTooltip />} />
         <XAxis
           axisLine={false}
           tickLine={false}
