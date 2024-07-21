@@ -1,4 +1,4 @@
-import Header from "@/components/common/header";
+import { Header } from "@/components/common/header";
 import React from "react";
 
 type DashboardLayoutProps = {

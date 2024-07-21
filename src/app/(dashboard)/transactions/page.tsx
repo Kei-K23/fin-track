@@ -14,7 +14,6 @@ import UploadButton from "./upload-button";
 import ImportCard from "./import-card";
 import { transactions } from "@/db/schema";
 import useSelectAccountAndConfirmTransaction from "@/features/transactions/hook/use-select-account";
-import { toast } from "sonner";
 import { useCreateTransactions } from "@/features/transactions/api/use-create-transactions";
 
 enum VARIANT {
@@ -34,8 +33,6 @@ export default function TransactionPage() {
   const [importResults, setImportResults] = useState(INITIAL_IMPORT_VALUE);
 
   const onUpload = (results: typeof INITIAL_IMPORT_VALUE) => {
-    console.log(results);
-
     setImportResults(results);
     setVariant(VARIANT.IMPORT);
   };

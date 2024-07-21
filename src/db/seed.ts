@@ -1,20 +1,15 @@
 import { config } from "dotenv";
 import { subDays } from "date-fns";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
 import { categories, accounts, transactions } from "@/db/schema";
 
 config({ path: ".env.local" });
 
-const client = new Client({
-    connectionString: process.env.DB_CONNECTION_URL!,
-});
+const sql = neon(process.env.DB_CONNECTION_URL!);
+const db = drizzle(sql);
 
-(async () => {
-    await client.connect();
-})();
-
-const db = drizzle(client);
-
-const SEED_USER_ID = "user_2jEbSud3zbKiOHIQoEHneaPr1O1";
+const SEED_USER_ID = "user_2g1JOKQh3QUlqivKbp70wEJobvd";
 const SEED_CATEGORIES = [
     { id: "category_1", name: "Food", userId: SEED_USER_ID, plaidId: null },
     { id: "category_2", name: "Rent", userId: SEED_USER_ID, plaidId: null },
@@ -34,8 +29,6 @@ const SEED_TRANSACTIONS: typeof transactions.$inferSelect[] = [];
 
 import { eachDayOfInterval, format } from 'date-fns';
 import { convertAmountToMiliUnits } from "@/lib/utils";
-import { Client } from "pg";
-import { drizzle } from "drizzle-orm/node-postgres";
 
 const generateRandomAmount = (category: typeof categories.$inferInsert) => {
     switch (category.name) {
