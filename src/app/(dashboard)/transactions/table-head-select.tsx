@@ -38,17 +38,12 @@ export default function TableHeadSelect({
       </SelectTrigger>
       <SelectContent>
         {options.map((option, index) => {
-          const disabled =
-            Object.values(selectedColumns).includes(option) &&
-            selectedColumns[`column_${columnIndex}`] !== option;
+          // const disabled =
+          //   Object.values(selectedColumns).includes(option) &&
+          //   selectedColumns[`column_${columnIndex}`] !== option;
 
           return (
-            <SelectItem
-              value={option}
-              key={index}
-              disabled={disabled}
-              className="capitalize"
-            >
+            <SelectItem value={option} key={index} className="capitalize">
               {option}
             </SelectItem>
           );

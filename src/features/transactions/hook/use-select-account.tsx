@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
 import { useCreateAccount } from "@/features/accounts/api/use-create-account";
 import Select from "@/components/select";
-
+// TODO: define normal cancel flag to know user is cancel or missing id
 export default function useSelectAccountAndConfirmTransaction(): [
   () => JSX.Element,
   () => Promise<unknown>
@@ -65,14 +65,22 @@ export default function useSelectAccountAndConfirmTransaction(): [
             placeholder="Select an account"
             options={accountOptions}
             onCreate={onCreateAccount}
-            onChange={(value) => (selectedValue.current = value)}
+            onChange={(value) => {
+              selectedValue.current = value;
+            }}
             disabled={accountQuery.isLoading || accountMutation.isPending}
           />
-          <DialogFooter className="space-y-2">
-            <Button variant={"outline"} onClick={handleCancel}>
+          <DialogFooter className="flex items-center gap-3">
+            <Button
+              className="w-full"
+              variant={"outline"}
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
-            <Button onClick={handleConfirm}>Delete</Button>
+            <Button className="w-full" onClick={handleConfirm}>
+              Confirm
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
