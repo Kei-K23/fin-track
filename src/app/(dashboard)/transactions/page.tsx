@@ -4,14 +4,42 @@ import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { columns } from "./columns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTransactions } from "@/features/transactions/api/use-get-transactions";
 import { useDeleteTransactions } from "@/features/transactions/api/use-delete-transactions";
 import { useNewTransaction } from "@/features/transactions/hook/use-new-transaction";
+import UploadButton from "./upload-button";
+import ImportCard from "./import-card";
+
+enum VARIANT {
+  LIST = "LIST",
+  IMPORT = "IMPORT",
+}
+
+const INITIAL_IMPORT_VALUE = {
+  data: [],
+  errors: [],
+  meta: {},
+};
 
 export default function TransactionPage() {
+  const [variant, setVariant] = useState<VARIANT>(VARIANT.LIST);
+  const [importResults, setImportResults] = useState(INITIAL_IMPORT_VALUE);
+
+  const onUpload = (results: typeof INITIAL_IMPORT_VALUE) => {
+    console.log(results);
+
+    setImportResults(results);
+    setVariant(VARIANT.IMPORT);
+  };
+
+  const onCancelImport = () => {
+    setImportResults(INITIAL_IMPORT_VALUE);
+    setVariant(VARIANT.LIST);
+  };
+
   const transactionsQuery = useGetTransactions();
   const deleteTransactions = useDeleteTransactions();
   const { onOpen } = useNewTransaction();
@@ -34,6 +62,17 @@ export default function TransactionPage() {
       </div>
     );
   }
+
+  if (variant === VARIANT.IMPORT) {
+    return (
+      <ImportCard
+        data={importResults.data}
+        onCancel={onCancelImport}
+        onSubmit={() => {}}
+      />
+    );
+  }
+
   return (
     <>
       <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-10">
@@ -42,10 +81,13 @@ export default function TransactionPage() {
             <CardTitle className="text-xl line-clamp-1">
               Transaction page
             </CardTitle>
-            <Button disabled={isDisabled} onClick={onOpen}>
-              <Plus className="size-4 mr-2" />
-              <span>Add new</span>
-            </Button>
+            <div className="flex lg:flex-row flex-col gap-2">
+              <Button disabled={isDisabled} onClick={onOpen}>
+                <Plus className="size-4 mr-2" />
+                <span>Add new</span>
+              </Button>
+              <UploadButton onUpload={onUpload} />
+            </div>
           </CardHeader>
           <CardContent>
             <DataTable
