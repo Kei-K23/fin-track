@@ -12,6 +12,10 @@ import { useDeleteTransactions } from "@/features/transactions/api/use-delete-tr
 import { useNewTransaction } from "@/features/transactions/hook/use-new-transaction";
 import UploadButton from "./upload-button";
 import ImportCard from "./import-card";
+import { transactions } from "@/db/schema";
+import useSelectAccountAndConfirmTransaction from "@/features/transactions/hook/use-select-account";
+import { toast } from "sonner";
+import { useCreateTransactions } from "@/features/transactions/api/use-create-transactions";
 
 enum VARIANT {
   LIST = "LIST",
@@ -25,6 +29,7 @@ const INITIAL_IMPORT_VALUE = {
 };
 
 export default function TransactionPage() {
+  const [AccountModal, confirm] = useSelectAccountAndConfirmTransaction();
   const [variant, setVariant] = useState<VARIANT>(VARIANT.LIST);
   const [importResults, setImportResults] = useState(INITIAL_IMPORT_VALUE);
 
@@ -42,10 +47,32 @@ export default function TransactionPage() {
 
   const transactionsQuery = useGetTransactions();
   const deleteTransactions = useDeleteTransactions();
+  const createTransactions = useCreateTransactions();
   const { onOpen } = useNewTransaction();
   const data = transactionsQuery.data || [];
 
   let isDisabled = transactionsQuery.isLoading || deleteTransactions.isPending;
+
+  const onSubmitInput = async (
+    values: (typeof transactions.$inferInsert)[]
+  ) => {
+    const accountId = await confirm();
+
+    if (!accountId) {
+      return toast.error("Please select an account to continue");
+    }
+
+    const data = values.map((value) => ({
+      ...value,
+      accountId: accountId as string,
+    }));
+
+    createTransactions.mutate(data, {
+      onSuccess: () => {
+        onCancelImport();
+      },
+    });
+  };
 
   if (isDisabled) {
     return (
@@ -65,11 +92,14 @@ export default function TransactionPage() {
 
   if (variant === VARIANT.IMPORT) {
     return (
-      <ImportCard
-        data={importResults.data}
-        onCancel={onCancelImport}
-        onSubmit={() => {}}
-      />
+      <>
+        <AccountModal />
+        <ImportCard
+          data={importResults.data}
+          onCancel={onCancelImport}
+          onSubmit={onSubmitInput}
+        />
+      </>
     );
   }
 

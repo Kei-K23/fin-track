@@ -6,7 +6,7 @@ import { toast } from "sonner";
 type ResponseType = InferResponseType<typeof client.api.transactions["bulk-create"]["$post"]>;
 type RequestType = InferRequestType<typeof client.api.transactions["bulk-create"]['$post']>["json"];
 
-export const useCreateTransaction = () => {
+export const useCreateTransactions = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
