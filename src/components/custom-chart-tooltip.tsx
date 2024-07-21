@@ -8,7 +8,6 @@ export default function CustomChartTooltip({ active, payload }: any) {
   const date = payload[0].payload.date;
   const income = payload[0].value;
   const expense = payload[1].value;
-  console.log(payload);
 
   return (
     <div className="rounded-sm bg-white shadow-sm border overflow-hidden">
